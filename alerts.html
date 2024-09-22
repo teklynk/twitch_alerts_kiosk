@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<title>Twitch Alerts Kiosk</title>
+<head>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+	<script src="https://github.com/tmijs/tmi.js/releases/download/v1.8.5/tmi.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Basic&display=swap" rel="stylesheet">
+	<style>
+		body {
+			font-family: "Basic", sans-serif;
+			font-weight: 400;
+			font-style: normal;
+			background-color: transparent;
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		p {
+			padding: 0;
+			margin: 0;
+			display: block;
+			text-transform: normal;
+			text-align: center;
+			text-shadow: black 4px 4px;
+		}
+		#alert_div {
+			background-size: contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="alert_div"></div>
+
+	<script>
+		// Configuration - Settings
+		let twitchChannel = "";
+		let twitchChatCommand = "!giphy";
+		let defaultImage = "./images/glitch_flat_white.png";
+		let stingerImage = ""
+		let giphyApiKey = "";
+		let giphyRating = "pg";
+		let giphyLang = "en";
+		let timeOut = 15;
+		let fontSize = "14";
+		let fontColor = "white";
+		let bgColor = "#9146ff";
+		let raids = true;
+		let follows = true;
+		let cheers = true;
+		let subs = true;
+	    let resubs = true;
+        let giphy = true;
+        let emotes = true;
+
+		if (!defaultImage) {
+			defaultImage = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		}
+
+		if (!stingerImage) {
+			stingerImage = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		}
+
+		$('#alert_div').css('background-image', 'url(' + defaultImage + ')');
+		$('#alert_div').css('background-color', bgColor);
+
+		let timer = null;
+
+		function doTimer(className) {
+		    clearTimeout(timer);
+
+		    if (timeOut > 0) {
+
+		        timer = setTimeout(function () {
+
+		            $('#alert_div').removeClass('active');
+		            $('#alert_div').removeClass(className);
+
+		            // go back to defaultImage
+		            $('#alert_div').css('background-image', 'url(' + defaultImage + ')');
+		            $('#alert_div').css('background-size', 'contain');
+		            $('#alert_div').empty();
+
+		        }, timeOut * 1000);
+		    }
+		}
+
+		function doGiphySearch(searchTerm) {
+			// Giphy API search query
+			let giphyApiResponse = JSON.parse($.getJSON({
+				'url': "https://api.giphy.com/v1/gifs/search?api_key=" + giphyApiKey + "&q=" + encodeURIComponent(searchTerm) + "&limit=25&offset=0&rating=" + giphyRating + "&lang=" + giphyLang,
+				'async': false
+			}).responseText);
+
+			// generate a randmon number between 0 and total item count from search results
+			let rndNum = Math.random() * giphyApiResponse.pagination.count;
+
+			// replace image source with a random giphy image from the search results
+			$('#alert_div').css('background-image', 'url(' + giphyApiResponse.data[parseInt(rndNum)].images.original.url + ')');
+			$('#alert_div').css('background-size', 'contain');
+			$('#alert_div').addClass('active');
+
+			doTimer();
+		}
+
+		function doAlert(alertType, userName) {
+			switch (alertType) {
+				case "raided":
+                    // code block
+					$('#alert_div').html("<p style='font-size: " + fontSize + "vw; color: " + fontColor + ";'>Thank you for the raid " + userName + "</p>");
+					$('#alert_div').addClass('active');
+					$('#alert_div').addClass(alertType);
+					$('#alert_div').css('background-image', 'url(' + stingerImage + ')');
+
+					doTimer(alertType);
+					break;
+
+				case "cheer":
+					// code block
+					$('#alert_div').html("<p style='font-size: " + fontSize + "vw; color: " + fontColor + ";'>Thank you for the bits " + userName + "</p>");
+					$('#alert_div').addClass('active');
+					$('#alert_div').addClass(alertType);
+					$('#alert_div').css('background-image', 'url(' + stingerImage + ')');
+					$('#alert_div').css('background-size', 'cover');
+
+					doTimer(alertType);
+					break;
+
+				case "subscription":
+					// code block
+					$('#alert_div').html("<p style='font-size: " + fontSize + "vw; color: " + fontColor + ";'>Thank you for the sub " + userName + "</p>");
+					$('#alert_div').addClass('active');
+					$('#alert_div').addClass(alertType);
+					$('#alert_div').css('background-image', 'url(' + stingerImage + ')');
+					$('#alert_div').css('background-size', 'cover');
+
+					doTimer(alertType);
+					break;
+
+				case "resub":
+					// code block
+					$('#alert_div').html("<p style='font-size: " + fontSize + "vw; color: " + fontColor + ";'>Thank you for the re-sub " + userName + "</p>");
+					$('#alert_div').addClass('active');
+					$('#alert_div').addClass(alertType);
+					$('#alert_div').css('background-image', 'url(' + stingerImage + ')');
+					$('#alert_div').css('background-size', 'cover');
+
+					doTimer(alertType);
+					break;
+			}
+		}
+
+		function htmlEntities(html) {
+		    function it() {
+		        return html.map(function (n, i, arr) {
+
+		            if (n.length === 1) {
+		                return n.replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
+		                    return '&#' + i.charCodeAt(0) + ';';
+		                });
+		            }
+
+		            return n;
+		        });
+		    }
+
+		    let isArray = Array.isArray(html);
+
+		    if (!isArray) {
+		        html = html.split('');
+		    }
+
+		    html = it(html);
+
+		    if (!isArray) html = html.join('');
+
+		    return html;
+		}
+
+		function getRandomNumberBetween(min, max) {
+		    return Math.floor(Math.random()*(max-min+1)+min);
+		}
+
+		function formatEmotes(text, emotes) {
+		    let splitText = text.split('');
+		    for (let i in emotes) {
+		        let e = emotes[i];
+		        for (let j in e) {
+		            let mote = e[j];
+		            if (typeof mote === 'string') {
+		                mote = mote.split('-');
+		                mote = [parseInt(mote[0]), parseInt(mote[1])];
+		                let length = mote[1] - mote[0],
+		                    empty = Array.apply(null, new Array(length + 1)).map(function () {
+		                        return ''
+		                    });
+		                splitText = splitText.slice(0, mote[0]).concat(empty).concat(splitText.slice(mote[0] + 1, splitText.length));
+		                splitText.splice(mote[0], 0, "https://static-cdn.jtvnw.net/emoticons/v2/" + i + "/default/dark/3.0,");
+		            }
+		        }
+		    }
+		    return htmlEntities(splitText).join('')
+		}
+
+
+
+		// TMIjs Twitch chat connection
+		const client = new tmi.Client({
+			options: {
+				debug: true,
+				skipUpdatingEmotesets: true
+			},
+    		connection: {reconnect: true},
+			channels: [twitchChannel]
+		});
+
+		client.connect().catch(console.error);
+        
+		// triggers on message
+		client.on('chat', (channel, user, message, self) => {
+
+			// do nothing if message does not start with twitchChatCommand
+			if (self || !message.startsWith(twitchChatCommand)) return;
+
+			// grabs the first word from the message
+			let commandOption = message.split(' ')[0];
+			// grabs all words/text that comes after the commandOption
+			let commandSearchTerm = message.slice(message.indexOf(twitchChatCommand) + twitchChatCommand.length);
+
+			// Checks if first word equals twitchChatCommand and that it has words/text following it.
+            if (giphy) {
+			    if (commandOption.trim() === twitchChatCommand && commandSearchTerm > '') {
+				    // All conditons met, now do the giphy function
+				    doGiphySearch(commandSearchTerm.trim());
+			    }
+            }
+
+		});
+
+        // Test Alerts - streamer only
+        client.on('chat', (channel, user, message, self) => {
+            if (user.username.toLowerCase() === twitchChannel.toLowerCase()) {
+                if (message.startsWith('!raided')) {
+				    doAlert('raided', user.username);
+			    }
+                if (message.startsWith('!cheer')) {
+				    doAlert('cheer', user.username);
+			    }
+                if (message.startsWith('!subscription')) {
+				    doAlert('subscription', user.username);
+			    }
+                if (message.startsWith('!resub')) {
+				    doAlert('resub', user.username);
+			    }
+            }
+        });
+
+		// triggers on raid
+        if (raids) {
+		    client.on("raided", (channel, username, viewers) => {
+			    doAlert('raided', username);
+		    });
+        }
+
+		// triggers on cheer
+        if (cheers) {
+		    client.on("cheer", (channel, userstate, message) => {
+			    doAlert('cheer', userstate.username);
+		    });
+        }
+
+        if (subs) {
+		    client.on("subscription", (channel, username, method, message, userstate) => {
+			    doAlert('subscription', username);
+		    });
+        }
+
+        if (resubs) {
+		    client.on("resub", (channel, username, months, message, userstate, methods) => {
+			    doAlert('resub', username);
+		    });
+        }
+
+        if (emotes) {
+        	client.on('message', (channel, tags, message, self) => {
+				function doEmotes() {
+					let chatemotes = tags.emotes;
+					// If Twitch emotes
+		        	let chatEmote = formatEmotes('', chatemotes);
+		        	// Create emotes array
+			        let chatEmoteArr = chatEmote.split(',');
+			        chatEmoteArr = chatEmoteArr.filter(Boolean);
+			        // Set a limit on how many emotes can be displayed from each message
+		        	let limitedEmoteArr = chatEmoteArr.filter((val, i) => i < 10);
+
+		        	if (limitedEmoteArr.length !== 0) {
+
+		        		$.each(limitedEmoteArr, function (key, value) {
+							if (value > "" || value !== null) {
+								console.log(value);
+
+								// Get the length of the array
+								const arrLength = limitedEmoteArr.length;
+
+								// Check if the array length
+								if (arrLength > 0) {
+									// Generate a random index within the array
+									const randIndex = Math.floor(Math.random() * (arrLength - 1));
+
+									// Use the random index to get the randomly selected GIF
+									const randomGif = limitedEmoteArr[randIndex];
+
+									console.log(randomGif);
+
+									// Replace image source with the random emote
+									$('#alert_div').css('background-image', 'url(' + randomGif + ')');
+									$('#alert_div').css('background-size', 'contain');
+									$('#alert_div').addClass('active');
+
+									doTimer();
+								}
+							}
+						});
+
+		        	}
+
+				}
+
+        		doEmotes();
+        	});
+        }
+
+	</script>
+
+</body>
+
+</html>
