@@ -5,6 +5,10 @@ This project will launch a chromium browser in kiosk mode and display Twitch emo
 
 ## Instructions
 
+Clone or download this repo to the desktop
+
+Open the default terminal program
+
 Make a autostart directory
 ```bash
 mkdir /home/$USER/.config/autostart
