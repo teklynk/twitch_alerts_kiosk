@@ -22,7 +22,7 @@ Add this to the kiosk.desktop file
 [Desktop Entry]
 Type=Application
 Name=Kiosk
-Exec=/usr/bin/bash /home/$USER/Desktop/twitch_alerts_kiosk/kiosk.sh
+Exec=/usr/bin/bash /home/<your_username>/Desktop/twitch_alerts_kiosk/kiosk.sh
 ```
 
 ### Raspberry Pi 3 with composite video out
