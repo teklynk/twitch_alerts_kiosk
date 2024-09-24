@@ -5,6 +5,17 @@ This project will launch a chromium browser in kiosk mode and display Twitch emo
 
 ## Instructions
 
+Take control of your project by hosting it on your own server and custom domain, or opt for a seamless experience on GitHub Pages or Cloudflare Pages. With this option, you can access your project from any device with a web browser - think Smart TVs, Fire Sticks, tablets, computers, Raspberry Pi and more. The possibilities are endless!
+
+To unleash the full potential of your project, simply open it in your favorite browser and enjoy it in fullscreen mode. Or, for an immersive experience, launch it in kiosk mode with a single command:
+```
+chrome --kiosk --start-maximized https://www.example.com
+```
+
+And for those who prefer a more traditional approach, you can also double-click the alerts.html file to open it in your default browser. The choice is yours!
+
+### Raspberry Pi Kiosk Setup - with autostart and kiosk mode
+
 Clone or download this repo to the desktop
 
 Open the default terminal program
@@ -38,28 +49,28 @@ Open alerts.html
 
 You can edit the configuration values here:
 ```javascript
-		// Configuration - Settings
-		let twitchChannel = "";
-		let twitchChatCommand = "!giphy";
-		let defaultImage = "./images/glitch_flat_white.png";
-		let stingerImage = ""
-		let giphyApiKey = "";
-		let giphyRating = "pg";
-		let giphyLang = "en";
-		let timeOut = 15;
-		let fontSize = "14";
-		let fontColor = "white";
-		let bgColor = "#9146ff";
-		let raids = true;
-		let follows = true;
-		let cheers = true;
-		let subs = true;
-	    let resubs = true;
-        let giphy = true;
-        let emotes = true;
+// Configuration - Settings
+let twitchChannel = "";
+let twitchChatCommand = "!giphy";
+let defaultImage = "./images/glitch_flat_white.png";
+let stingerImage = ""
+let giphyApiKey = "";
+let giphyRating = "pg";
+let giphyLang = "en";
+let timeOut = 15;
+let fontSize = "14";
+let fontColor = "white";
+let bgColor = "#9146ff";
+let raids = true;
+let follows = true;
+let cheers = true;
+let subs = true;
+let resubs = true;
+let giphy = true;
+let emotes = true;
 ```
 
-Place images inside the images directory and update these values with ouy own images. Images can be animated gif, png, jpeg. Be sure to refrences to them with `./images/`
+Place images inside the images directory and update these values with your own images. Images can be animated gif, png, jpeg. Be sure to refrences to them with `./images/`
 ```
 let defaultImage = "./images/glitch_flat_white.png";
 let stingerImage = "./images/technology-twitch-wallpaper-preview.jpg"
