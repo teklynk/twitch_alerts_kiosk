@@ -254,11 +254,15 @@
 				if (self) return; // Ignore self-messages
 
 				if (tags['first-msg']) {
+					
+					console.log('first-msg: ' + tags.username);
 					// This is the user's first message, get user info
 					let user_json = JSON.parse($.getJSON({
 						'url': "https://twitchapi.teklynk.com/getuserinfo.php?channel=" + tags.username + "&limit=1",
 						'async': false
 					}).responseText);
+
+					console.log('profile_image_url: ' + user_json.data[0]['profile_image_url']);
 
 					$('#alert_div').css('background-image', 'url(' + user_json.data[0]['profile_image_url'] + ')');
 					$('#alert_div').css('background-size', 'contain');
