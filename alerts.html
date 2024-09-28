@@ -253,7 +253,7 @@
 			client.on('message', (channel, tags, message, self) => {
 				if (self) return; // Ignore self-messages
 
-				if (tags['first-msg']) {
+				if (tags['first-msg'] || tags['returning-chatter']) {
 					
 					console.log('first-msg: ' + tags.username);
 					// This is the user's first message, get user info
